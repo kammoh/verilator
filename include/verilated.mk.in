@@ -214,20 +214,21 @@ endif
 #   2. Create a new archive from extracted .o and given .o
 %.a: | %.verilator_deplist.tmp
 	$(info Archive $(AR) -rcs $@ $^)
-	$(foreach L, $(filter-out %.a,$^), $(shell echo $L >>$@.verilator_deplist.tmp))
-	@if test $(words $(filter %.a,$^)) -eq 0; then \
-		$(AR) -rcs $@ @$@.verilator_deplist.tmp; \
-	else \
-		$(RM) -rf $@.tmpdir; \
-		for archive in $(filter %.a,$^); do \
-			mkdir -p $@.tmpdir/$$(basename $${archive}); \
-			cd $@.tmpdir/$$(basename $${archive}); \
-			$(AR) -x ../../$${archive}; \
-			cd ../..; \
-		done; \
-		$(AR) -rcs $@ @$@.verilator_deplist.tmp $@.tmpdir/*/*.o; \
-	fi \
-	; $(RM) -rf $@.verilator_deplist.tmp $@.tmpdir
+	$(AR) -rcs $@ $^
+	# $(foreach L, $(filter-out %.a,$^), $(shell echo $L >>$@.verilator_deplist.tmp))
+	# @if test $(words $(filter %.a,$^)) -eq 0; then \
+	# 	$(AR) -rcs $@ @$@.verilator_deplist.tmp; \
+	# else \
+	# 	$(RM) -rf $@.tmpdir; \
+	# 	for archive in $(filter %.a,$^); do \
+	# 		mkdir -p $@.tmpdir/$$(basename $${archive}); \
+	# 		cd $@.tmpdir/$$(basename $${archive}); \
+	# 		$(AR) -x ../../$${archive}; \
+	# 		cd ../..; \
+	# 	done; \
+	# 	$(AR) -rcs $@ @$@.verilator_deplist.tmp $@.tmpdir/*/*.o; \
+	# fi \
+	# ; $(RM) -rf $@.verilator_deplist.tmp $@.tmpdir
 
 # Truncate the dependency list file used in the %.a target above.
 %.verilator_deplist.tmp:
